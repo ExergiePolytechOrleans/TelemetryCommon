@@ -12,6 +12,7 @@ struct TelemetryPacket1 {
 
 #pragma pack(push, 1)
 struct TelemetryPacket2 {
+  uint32_t time_stamp;
   float vbat;
   float teng;
   float lat;

@@ -9,7 +9,7 @@ UART_MAGIC = b"\xAA\x55\xAA\x55"
 LORA_HEADER_FORMAT = "<BBBBH"
 UART_HEADER_FORMAT = "<4sB"
 PACKET1_FORMAT = "<4s"
-PACKET2_FORMAT = "<fffff"
+PACKET2_FORMAT = "<Ifffff"
 
 LORA_HEADER_SIZE = struct.calcsize(LORA_HEADER_FORMAT)
 UART_HEADER_SIZE = struct.calcsize(UART_HEADER_FORMAT)
@@ -33,6 +33,7 @@ class TelemetryPacket1:
 
 @dataclass
 class TelemetryPacket2:
+    time_stamp: int
     vbat: float
     teng: float
     lat: float
@@ -63,5 +64,5 @@ def unpack_packet1(payload: bytes) -> TelemetryPacket1:
 
 
 def unpack_packet2(payload: bytes) -> TelemetryPacket2:
-    vbat, teng, lat, lng, speed = struct.unpack(PACKET2_FORMAT, payload[:PACKET2_SIZE])
-    return TelemetryPacket2(vbat, teng, lat, lng, speed)
+    time_stamp, vbat, teng, lat, lng, speed = struct.unpack(PACKET2_FORMAT, payload[:PACKET2_SIZE])
+    return TelemetryPacket2(time_stamp, vbat, teng, lat, lng, speed)
