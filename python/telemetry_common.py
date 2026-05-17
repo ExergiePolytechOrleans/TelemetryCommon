@@ -4,17 +4,19 @@
 import struct
 from dataclasses import dataclass
 
-UART_MAGIC = b"\xAA\x55\xAA\x55"
+UART_MAGIC = b"\xaa\x55\xaa\x55"
 
 LORA_HEADER_FORMAT = "<BBBBH"
 UART_HEADER_FORMAT = "<4sB"
 PACKET1_FORMAT = "<4s"
 PACKET2_FORMAT = "<Ifffff"
+PACKET3_FORMAT = "<IIH"
 
 LORA_HEADER_SIZE = struct.calcsize(LORA_HEADER_FORMAT)
 UART_HEADER_SIZE = struct.calcsize(UART_HEADER_FORMAT)
 PACKET1_SIZE = struct.calcsize(PACKET1_FORMAT)
 PACKET2_SIZE = struct.calcsize(PACKET2_FORMAT)
+PACKET3_SIZE = struct.calcsize(PACKET3_FORMAT)
 
 
 @dataclass
@@ -41,6 +43,13 @@ class TelemetryPacket2:
     speed: float
 
 
+@dataclass
+class TelemetryPacket3:
+    start_time: int
+    duration: int
+    count: int
+
+
 def crc16_ccitt(data: bytes) -> int:
     crc = 0xFFFF
     for byte in data:
@@ -54,7 +63,9 @@ def crc16_ccitt(data: bytes) -> int:
 
 
 def unpack_lora_header(data: bytes) -> TelemetryLoRaHeader:
-    source, dest, version, size, crc16 = struct.unpack(LORA_HEADER_FORMAT, data[:LORA_HEADER_SIZE])
+    source, dest, version, size, crc16 = struct.unpack(
+        LORA_HEADER_FORMAT, data[:LORA_HEADER_SIZE]
+    )
     return TelemetryLoRaHeader(source, dest, version, size, crc16)
 
 
@@ -64,5 +75,12 @@ def unpack_packet1(payload: bytes) -> TelemetryPacket1:
 
 
 def unpack_packet2(payload: bytes) -> TelemetryPacket2:
-    time_stamp, vbat, teng, lat, lng, speed = struct.unpack(PACKET2_FORMAT, payload[:PACKET2_SIZE])
+    time_stamp, vbat, teng, lat, lng, speed = struct.unpack(
+        PACKET2_FORMAT, payload[:PACKET2_SIZE]
+    )
     return TelemetryPacket2(time_stamp, vbat, teng, lat, lng, speed)
+
+
+def unpack_packet3(payload: bytes) -> TelemetryPacket3:
+    start_time, duration = struct.unpack(PACKET3_FORMAT, payload[:PACKET3_SIZE])
+    return TelemetryPacket2(start_time, duration)

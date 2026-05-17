@@ -2,6 +2,7 @@
 // Copyright (C) 2026 Association Exergie <association.exergie@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
+#include <cstdint>
 #include <inttypes.h>
 
 #pragma pack(push, 1)
@@ -18,6 +19,14 @@ struct TelemetryPacket2 {
   float lat;
   float lng;
   float speed;
+};
+#pragma pack(pop)
+
+#pragma pack(push, 1)
+struct TelemetryPacket3 {
+  uint32_t start_time_;
+  uint32_t duration_;
+  uint16_t count_;
 };
 #pragma pack(pop)
 
