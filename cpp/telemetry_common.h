@@ -2,7 +2,6 @@
 // Copyright (C) 2026 Association Exergie <association.exergie@gmail.com>
 // SPDX-License-Identifier: MIT
 #pragma once
-#include <cstdint>
 #include <inttypes.h>
 
 #pragma pack(push, 1)
